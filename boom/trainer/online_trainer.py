@@ -61,9 +61,9 @@ class OnlineTrainer(Trainer):
             ep_rewards_pi, ep_successes_pi = [np.nan], [np.nan]
 
         return dict(
-            episode_reward=np.nanmean(ep_rewards),
+            episode_return=np.nanmean(ep_rewards),
             episode_success=np.nanmean(ep_successes),
-            episode_reward_pi=np.nanmean(ep_rewards_pi),
+            episode_return_pi=np.nanmean(ep_rewards_pi),
             episode_success_pi=np.nanmean(ep_successes_pi),
         )
 
@@ -134,13 +134,13 @@ class OnlineTrainer(Trainer):
                 if self._step > 0:
                     rewards = torch.tensor([td["reward"] for td in self._tds[1:]])
                     train_metrics.update(
-                        episode_reward=rewards.sum(),
+                        episode_return=rewards.sum(),
                         episode_success=info["success"],
                     )
                     train_metrics.update(self.common_metrics())
                     self.logger.log(train_metrics, "train")
                     self.logger.log({
-                        'return': train_metrics['episode_reward'],
+                        'return': train_metrics['episode_return'],
                         'episode_length': len(self._tds[1:]),
                         'success': train_metrics['episode_success'],
                         'success_subtasks': info.get('success_subtasks', None),

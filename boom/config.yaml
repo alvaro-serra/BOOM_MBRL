@@ -12,7 +12,7 @@ eval_episodes: 10
 eval_pi: true
 eval_diffusion: false
 eval_value: false
-eval_freq: 50000
+eval_freq: 10000
 
 # training
 steps: 2_001_000 # env step = steps * action_repeat
@@ -67,9 +67,9 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: boom
+wandb_project: boom_test
 
-wandb_entity: zgj21-tsinghua-university
+wandb_entity: delft-amr
 
 wandb_silent: false
 disable_wandb: false

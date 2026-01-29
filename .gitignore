@@ -4,3 +4,5 @@ boom/logs
 boom/outputs
 */__pycache__/*
 *.pyc
+.idea
+boom.egg-info/

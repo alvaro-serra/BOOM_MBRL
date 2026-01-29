@@ -14,7 +14,7 @@ CONSOLE_FORMAT = [
     ("iteration", "I", "int"),
     ("episode", "E", "int"),
     ("step", "I", "int"),
-    ("episode_reward", "R", "float"),
+    ("episode_return", "R", "float"),
     ("episode_success", "S", "float"),
     ("total_time", "T", "time"),
 ]
@@ -148,7 +148,7 @@ class Logger:
         wandb.init(
             project=self.project,
             entity=self.entity,
-            name=f"{cfg.task}.boom.{cfg.exp_name}.{cfg.seed}",
+            name=f"boom",#f"{cfg.task}.boom.{cfg.exp_name}.{cfg.seed}",
             tags=cfg_to_group(cfg, return_list=True) + [f"seed:{cfg.seed}"],
             dir=self._log_dir,
             config=OmegaConf.to_container(cfg, resolve=True),
@@ -226,19 +226,19 @@ class Logger:
             if "+" not in k:
                 continue
             task = k.split("+")[1]
-            if task in TASK_SET["mt30"] and k.startswith("episode_reward"):  # DMControl
+            if task in TASK_SET["mt30"] and k.startswith("episode_return"):  # DMControl
                 dmcontrol_reward.append(v)
                 print(colored(f"  {task:<22}\tR: {v:.01f}", "yellow"))
             elif (
                 task in TASK_SET["mt80"] and task not in TASK_SET["mt30"]
             ):  # Meta-World
-                if k.startswith("episode_reward"):
+                if k.startswith("episode_return"):
                     metaworld_reward.append(v)
                 elif k.startswith("episode_success"):
                     metaworld_success.append(v)
                     print(colored(f"  {task:<22}\tS: {v:.02f}", "yellow"))
         dmcontrol_reward = np.nanmean(dmcontrol_reward)
-        d["episode_reward+avg_dmcontrol"] = dmcontrol_reward
+        d["episode_return+avg_dmcontrol"] = dmcontrol_reward
         print(
             colored(
                 f'  {"dmcontrol":<22}\tR: {dmcontrol_reward:.01f}',
@@ -249,7 +249,7 @@ class Logger:
         if cfg.task == "mt80":
             metaworld_reward = np.nanmean(metaworld_reward)
             metaworld_success = np.nanmean(metaworld_success)
-            d["episode_reward+avg_metaworld"] = metaworld_reward
+            d["episode_return+avg_metaworld"] = metaworld_reward
             d["episode_success+avg_metaworld"] = metaworld_success
             print(
                 colored(
@@ -278,7 +278,7 @@ class Logger:
                     continue
                 self._wandb.log({category + "/" + k: v}, step=d[xkey])
         if category == "eval" and self._save_csv:
-            keys = ["step", "episode_reward"]
+            keys = ["step", "episode_return"]
             self._eval.append(np.array([d[keys[0]], d[keys[1]]]))
             pd.DataFrame(np.array(self._eval)).to_csv(
                 self._log_dir / "eval.csv", header=keys, index=None

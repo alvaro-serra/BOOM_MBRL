@@ -66,8 +66,8 @@ def make_env(cfg):
 
     else:
         env = None
-        env = make_dm_control_env(cfg)
-        # env = make_humanoid_env(cfg)
+        # env = make_dm_control_env(cfg)
+        env = make_humanoid_env(cfg)
         # env = make_gym_env(cfg)
         
         if env is None:
